@@ -16,7 +16,7 @@ Include the header in your cpp file.
 #include "hard_api/include/hard_api.h"
 ```
 
-More detail see [`tests/main.cpp`](./test/main.cpp).
+More detail see [`tests/main.cpp`](./tests/main.cpp).
 
 ## Credits
 
