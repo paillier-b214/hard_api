@@ -6,21 +6,22 @@
 #define HARD_API_HARD_API_H
 
 #include "gmpxx.h"
+#include "memory"
 
 /** All platform transparent interface */
 namespace hard {
-  struct PYNQ_SHARED_MEMORY;
+static_assert(GMP_LIMB_BITS == 64, "gmp limb bits should be 64");
 
 class Hard {
-  PYNQ_SHARED_MEMORY* memory_1, *memory_2;
+ PYNQ_SHARED_MEMORY memory_1{}, memory_2{};
+ PYNQ_HLS overlay{};
 
 public:
   Hard();
+
+  mpz_class encrypt(const mpz_class &m);
+  ~Hard();
 };
-
-void init();
-
-void encrypt(mpz_class &c, const mpz_class &m);
 }// namespace hard
 
 #endif//HARD_API_HARD_API_H
