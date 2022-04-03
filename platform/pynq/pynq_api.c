@@ -82,13 +82,13 @@ static int startDMAChannel(PYNQ_AXI_DMA*, AXI_DMA_DIRECTION);
 static int stopDMAChannel(PYNQ_AXI_DMA*, AXI_DMA_DIRECTION);
 static int isDMAChannelRunning(PYNQ_AXI_DMA*, AXI_DMA_DIRECTION);
 static int isDMAChannelIdle(PYNQ_AXI_DMA*, AXI_DMA_DIRECTION);
-static char * getBaseNameFromFile(char*);
-static char * getBinNameFromBit(char*);
-static char * extractBitstreamPayload(char*, int*);
-static void extractBitstreamInfo(char*, PYNQ_BITSTREAM_INFO*);
-static char * readRawBitfile(char*);
+static const char * getBaseNameFromFile(const char*);
+static char * getBinNameFromBit(const char*);
+static char * extractBitstreamPayload(const char*, int*);
+static void extractBitstreamInfo(const char*, PYNQ_BITSTREAM_INFO*);
+static char * readRawBitfile(const char*);
 static void freeHeader(PYNQ_BITSTREAM_INFO*);
-static int loadBitstream(char *, int);
+static int loadBitstream(const char *, int);
 
 /**
 * Returns the time in microseconds since the epoch
@@ -807,14 +807,14 @@ int PYNQ_readGPIO(PYNQ_GPIO * state, int * val) {
 /**
 * Loads the full bitstream with name and location, bitstream_name, onto the PL and activates it.
 */
-int PYNQ_loadBitstream(char* filename) {
+int PYNQ_loadBitstream(const char* filename) {
   return loadBitstream(filename, 0);
 }
 
 /**
 * Loads the partial bitstream with name and location, bitstream_name, onto the PL and activates it.
 */
-int PYNQ_loadPartialBitstream(char* filename) {
+int PYNQ_loadPartialBitstream(const char* filename) {
   return loadBitstream(filename, 1);
 }
 
@@ -822,7 +822,7 @@ int PYNQ_loadPartialBitstream(char* filename) {
 * Extracs information from the bit stream, bitstream_name, into the header type. This contains both the header information
 * and payload data.
 */
-int PYNQ_extractBitstreamInfo(PYNQ_BITSTREAM_INFO * bitstream_header, char * bitstream_name) {
+int PYNQ_extractBitstreamInfo(PYNQ_BITSTREAM_INFO * bitstream_header, const char * bitstream_name) {
   extractBitstreamInfo(bitstream_name, bitstream_header);
   return PYNQ_SUCCESS;
 }
@@ -845,14 +845,14 @@ int PYNQ_freeBitstreamInfo(PYNQ_BITSTREAM_INFO * header) {
 * Loads the bitstream with name and location, bitstream_name, onto the PL and activates it. 
 * Pass partial==0 for full bitstream configuration and partial==1 for partial bitstream.
 */
-static int loadBitstream(char * bitstream_name, int partial) {
+static int loadBitstream(const char * bitstream_name, int partial) {
   if (partial != 0 && partial != 1)
     fprintf(stderr, "Unrecognized loadBitstream flag\n");
 
   int bitstream_payload_length;
   char * bitstream_payload=extractBitstreamPayload(bitstream_name, &bitstream_payload_length);
 
-  char * base_name=getBaseNameFromFile(bitstream_name);
+  const char * base_name=getBaseNameFromFile(bitstream_name);
   char * binfile_name=getBinNameFromBit(base_name);
   char firmware_path[strlen(binfile_name) + strlen(FIRMWARE_PATH_PREFIX)+1];
   sprintf(firmware_path, "%s%s", FIRMWARE_PATH_PREFIX, binfile_name);
@@ -1136,7 +1136,7 @@ static int isDMAChannelIdle(PYNQ_AXI_DMA * state, AXI_DMA_DIRECTION direction) {
 /**
 * Given a full path filename this will return the filename alone, with the proceeding path stripped off
 */
-static char * getBaseNameFromFile(char * filename) {
+static const char * getBaseNameFromFile(const char * filename) {
   char * slash_loc=strrchr(filename, '/');
   if (slash_loc == NULL) return filename;
   return slash_loc+1;
@@ -1146,7 +1146,7 @@ static char * getBaseNameFromFile(char * filename) {
 * Given the filename of a bit stream will return the corresponding binary filename (this is quite simple,
 * but required for launching the bitstream payload on the PL.)
 */
-static char * getBinNameFromBit(char * filename) {
+static char * getBinNameFromBit(const char * filename) {
   char * dot_point=strrchr(filename, '.');
   char * bin_name=(char*) malloc((dot_point-filename)+5);
   memcpy(bin_name, filename, dot_point-filename);
@@ -1161,7 +1161,7 @@ static char * getBinNameFromBit(char * filename) {
 * Note that the bitstream is in big endian whereas the Zynq works in little endian, hence we need to do byte swaps
 * on the bitstream contents, both to find the payload part and also on the payload data itself (in 32 bit chunks)
 */
-static char * extractBitstreamPayload(char * filename, int * data_len) {
+static char * extractBitstreamPayload(const char * filename, int * data_len) {
   char * data_buffer=NULL;
   char * rawBitData=readRawBitfile(filename);
   short length;
@@ -1211,7 +1211,7 @@ static char * extractBitstreamPayload(char * filename, int * data_len) {
 * Note that the bitstream is in big endian whereas the Zynq works in little endian, hence we need to do byte swaps
 * on the bitstream contents, both to find the payload part and also on the payload data itself (in 32 bit chunks)
 */
-static void extractBitstreamInfo(char * filename, PYNQ_BITSTREAM_INFO * header) {
+static void extractBitstreamInfo(const char * filename, PYNQ_BITSTREAM_INFO * header) {
   char * data_buffer=NULL;
   char * rawBitData=readRawBitfile(filename);
   short length;
@@ -1288,7 +1288,7 @@ static void extractBitstreamInfo(char * filename, PYNQ_BITSTREAM_INFO * header) 
 * We don't know how large the file contents are, so it reads the information in chunks and then resizes a
 * buffer to store this into piece by piece.
 */
-static char * readRawBitfile(char * filename) {
+static char * readRawBitfile(const char * filename) {
   FILE * f = fopen(filename, "rb");
 
   char * buffer = (char *) malloc(READ_CHUNK_SIZE);

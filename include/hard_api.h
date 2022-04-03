@@ -17,7 +17,7 @@ static_assert(GMP_LIMB_BITS == 64, "gmp limb bits should be 64");
 
 class Hard {
  PYNQ_SHARED_MEMORY *memory_1, *memory_2;
- PYNQ_HLS *overlay;
+ PYNQ_HLS *encrypt_core, *decrypt_core;
 
 public:
   Hard();
@@ -35,6 +35,10 @@ public:
    * @param m plain message to be encrypted
    */
   void encrypt(mpz_t c, const mpz_t m);
+
+  void decrypt(mpz_t m, const mpz_t c);
+
+  mpz_class decrypt(const mpz_class &c);
 
   ~Hard();
 };
