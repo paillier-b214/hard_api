@@ -10,14 +10,16 @@
 extern "C" {
 #include "../platform/pynq/pynq_api.h"
 }
+#include "string"
 
 /** All platform transparent interface */
 namespace hard {
 static_assert(GMP_LIMB_BITS == 64, "gmp limb bits should be 64");
+using std::string;
 
 class Hard {
- PYNQ_SHARED_MEMORY *memory_1, *memory_2;
- PYNQ_HLS *encrypt_core, *decrypt_core;
+  PYNQ_SHARED_MEMORY *memory_1, *memory_2, *memory_param;
+  PYNQ_HLS *encrypt_core, *decrypt_core, *param_core;
 
 public:
   Hard();
@@ -36,9 +38,11 @@ public:
    */
   void encrypt(mpz_t c, const mpz_t m);
 
+  mpz_class decrypt(const mpz_class &c);
+
   void decrypt(mpz_t m, const mpz_t c);
 
-  mpz_class decrypt(const mpz_class &c);
+  void load_param(const string &hex_file);
 
   ~Hard();
 };
