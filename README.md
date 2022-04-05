@@ -1,4 +1,4 @@
-# Paillier-b214 Hardware API
+# Hardware API
 
 ## Usage
 
