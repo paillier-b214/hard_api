@@ -8,7 +8,7 @@ Assume $TARGET is your cmake target.
 Add this code to your CMakeLists.txt:
 ```cmake
 add_subdirectory(hard_api)
-target_add_library($TARGET hard_api)
+target_link_libraries($TARGET hard_api)
 ```
 
 Include the header in your cpp file.
