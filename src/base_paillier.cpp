@@ -106,7 +106,8 @@ void Paillier::mul(mpz_class &res, const mpz_class &c, const mpz_class &m) {
 
   mpz_powm(res.get_mpz_t(), c.get_mpz_t(), m.get_mpz_t(), nsquare.get_mpz_t());
 }
-void Paillier::encode(mpz_class &res, double scalar, const double scale) {
+template<class T>
+void Paillier::encode(mpz_class &res, T scalar, const double scale) {
   bool flag = (scalar < 0);
   if (flag)
     scalar = -scalar;
@@ -117,7 +118,9 @@ void Paillier::encode(mpz_class &res, double scalar, const double scale) {
     res = after_scale;
   }
 }
-void Paillier::decode(double &res, const mpz_class &plain, bool isMul, double scale_factor) {
+
+template<class T>
+void Paillier::decode(T &res, const mpz_class &plain, bool isMul, double scale_factor) {
   uint64_t ret;
   mpz_class max_int = n / 3;          // n/3
   mpz_class forNegative = max_int * 2;// 2n/3
@@ -140,7 +143,7 @@ void Paillier::decode(double &res, const mpz_class &plain, bool isMul, double sc
       ret = -ret;
   }
 
-  res = static_cast<double>(ret) / scale_factor;
+  res = static_cast<T>(ret) / scale_factor;
 }
 void Paillier::vector_mul(std::vector<mpz_class> &res, const mpz_class &c, const std::vector<mpz_class> &m, int startIndex, int endIndex) {
   for (int i = startIndex; i < endIndex; ++i) {
