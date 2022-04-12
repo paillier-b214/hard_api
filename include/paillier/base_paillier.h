@@ -4,10 +4,11 @@
 #include "gmpxx.h"
 
 class Paillier {
-private:
+protected:
   mpz_class n, g, nsquare;
   mpz_class p, q, pm1, qm1, psquare, qsquare, p_inverse, hp, hq;
   const unsigned key_size;
+
 public:
   explicit Paillier(unsigned key_size): key_size(key_size) {}
   virtual ~Paillier() = default;

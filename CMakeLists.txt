@@ -8,12 +8,13 @@ set(PLATFORM_LIBRARIES pynq)
 
 project(Paillier)
 
-add_library(paillier_api STATIC src/hard_api.cpp src/base_paillier.cpp src/pynq.cpp)
+add_library(paillier_api STATIC src/base_paillier.cpp src/pynq.cpp)
 
 target_compile_definitions(paillier_api PUBLIC PYNQ)
 
 target_include_directories(paillier_api PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/paillier
+    ${CMAKE_CURRENT_SOURCE_DIR}/platform/external
 )
 target_include_directories(paillier_api PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
