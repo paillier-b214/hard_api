@@ -1,11 +1,28 @@
 cmake_minimum_required(VERSION 3.10)
-project(hard_api)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(platform)
+
+set(PLATFORM_DIR platform)
+set(PLATFORM_LIBRARIES pynq)
+
+project(Paillier)
+
+add_library(paillier_api STATIC src/hard_api.cpp src/base_paillier.cpp src/pynq.cpp)
+
+target_compile_definitions(paillier_api PUBLIC PYNQ)
+
+target_include_directories(paillier_api PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/paillier
+)
+target_include_directories(paillier_api PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+foreach(SUB_LIB ${PLATFORM_LIBRARIES})
+    add_subdirectory("${PLATFORM_DIR}/${SUB_LIB}")
+endforeach()
+
+target_link_libraries(paillier_api ${PLATFORM_LIBRARIES} pthread cma gmpxx gmp)
+
 add_subdirectory(tests)
-
-add_library(hard_api STATIC src/hard_api.cpp include/hard_api.h)
-target_link_libraries(hard_api pynq_api pthread cma gmpxx gmp)
-

@@ -2,7 +2,7 @@
 // Created by 16586 on 2022/3/30.
 //
 
-#include "../include/hard_api.h"
+#include "paillier/hard_api.h"
 #include <iostream>
 
 int main() {

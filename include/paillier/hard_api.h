@@ -1,14 +1,10 @@
-//
-// Created by 16586 on 2022/3/30.
-//
-
 #ifndef HARD_API_HARD_API_H
 #define HARD_API_HARD_API_H
 
 #include <gmpxx.h>
 #include <memory>
 extern "C" {
-#include "../platform/pynq/pynq_api.h"
+#include "pynq/pynq_api.h"
 }
 #include "string"
 
