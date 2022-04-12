@@ -2,6 +2,7 @@
 #ifndef HARD_API_INCLUDE_PAILLIER_H
 #define HARD_API_INCLUDE_PAILLIER_H
 #include "gmpxx.h"
+#include <vector>
 
 class Paillier {
 protected:
@@ -10,7 +11,7 @@ protected:
   const unsigned key_size;
 
 public:
-  explicit Paillier(unsigned key_size): key_size(key_size) {}
+  explicit Paillier(unsigned key_size) : key_size(key_size) {}
   virtual ~Paillier() = default;
 
   mpz_class encrypt(const mpz_class &m) {
@@ -35,7 +36,7 @@ public:
     return std::move(res);
   }
 
-  virtual void add(mpz_class &res ,const mpz_class &c1, const mpz_class &c2);
+  virtual void add(mpz_class &res, const mpz_class &c1, const mpz_class &c2);
 
   mpz_class mul(const mpz_class &c, const mpz_class &m) {
     mpz_class res;
@@ -44,6 +45,13 @@ public:
   }
 
   virtual void mul(mpz_class &res, const mpz_class &c, const mpz_class &m);
+
+  void encode(mpz_class &res, double scalar, double scale = 1e6);
+
+  void decode(double &res, const mpz_class &plain, bool isMul, double scale_factor = 1e6);
+
+  virtual void vector_mul(std::vector<mpz_class> &res, const mpz_class &c, const std::vector<mpz_class> &m, int startIndex, int endIndex);
+  virtual void vector_decrypt(std::vector<mpz_class> &res, const std::vector<mpz_class> &c, int startIndex, int endIndex);
 };
 
 #endif//HARD_API_INCLUDE_PAILLIER_H
