@@ -106,45 +106,7 @@ void Paillier::mul(mpz_class &res, const mpz_class &c, const mpz_class &m) {
 
   mpz_powm(res.get_mpz_t(), c.get_mpz_t(), m.get_mpz_t(), nsquare.get_mpz_t());
 }
-template<class T>
-void Paillier::encode(mpz_class &res, T scalar, const double scale) {
-  bool flag = (scalar < 0);
-  if (flag)
-    scalar = -scalar;
-  auto after_scale = static_cast<uint64_t>(scalar * scale);
-  if (flag) {
-    res = n - after_scale;
-  } else {
-    res = after_scale;
-  }
-}
 
-template<class T>
-void Paillier::decode(T &res, const mpz_class &plain, bool isMul, double scale_factor) {
-  uint64_t ret;
-  mpz_class max_int = n / 3;          // n/3
-  mpz_class forNegative = max_int * 2;// 2n/3
-  bool isPositive = max_int > plain;
-  bool isNegative = plain > forNegative;
-
-  if (!isMul) {
-    if (isNegative) {
-      mpz_class tmp = plain - n;
-      ret = tmp.get_si();
-    } else if (isPositive) {
-      ret = plain.get_si();
-    } else {
-      std::cout << "There is a possible OVERFLOW!\n";
-    }
-  } else {
-    mpz_class tmp = ((isNegative ? n - plain : plain) / scale_factor);
-    ret = tmp.get_si();
-    if (isNegative)
-      ret = -ret;
-  }
-
-  res = static_cast<T>(ret) / scale_factor;
-}
 void Paillier::vector_mul(std::vector<mpz_class> &res, const mpz_class &c, const std::vector<mpz_class> &m, int startIndex, int endIndex) {
   for (int i = startIndex; i < endIndex; ++i) {
     mul(res[i], c, m[i - startIndex]);
